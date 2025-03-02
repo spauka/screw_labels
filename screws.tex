@@ -1,0 +1,119 @@
+\documentclass[a4paper]{article}
+\usepackage[newdimens]{labels} % Use 'labels' package with A4 paper
+\usepackage{graphicx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage[x11names]{xcolor}
+\usepackage{noto}
+\usepackage[fontsize=8pt]{fontsize}
+\usepackage{pgffor}
+\usepackage{expl3}
+
+% Use sans serif fonts
+\renewcommand{\familydefault}{\sfdefault}
+
+% Define the layout for Avery 46x11.11mm labels
+\LabelCols=4    % Number of label columns
+\LabelRows=21   % Number of label rows
+\LeftPageMargin=6mm % Left page margin
+\RightPageMargin=6mm
+\TopPageMargin=16mm % Top page margin
+\BottomPageMargin=16mm
+\InterLabelColumn=4.5mm % Horizontal spacing between labels
+\InterLabelRow=1.5mm % Vertical spacing between labels
+
+\TopLabelBorder=0mm
+\BottomLabelBorder=0mm
+\LeftLabelBorder=0mm
+\RightLabelBorder=0mm
+
+\LabelInfotrue
+\LabelGridtrue
+
+\setlength{\tabcolsep}{0pt}
+\renewcommand{\arraystretch}{0}
+
+\newcolumntype{x}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\newcommand{\brass}{{\color{Tan2}\footnotesize Brass}}
+\newcommand{\stainless}{{\color{LightSteelBlue4}S.Steel}}
+
+\definecolor{pan}{HTML}{D0572F}
+\definecolor{csk}{HTML}{A72FD0}
+\definecolor{sock}{HTML}{2FA8D0}
+\definecolor{hex}{HTML}{58D02F}
+
+\newcommand{\panhead}{{{\color{pan}PAN HEAD}}}
+\newcommand{\countersunk}{{{\color{csk}CSK HEAD}}}
+\newcommand{\socket}{{{\color{sock}SOCKET HEAD}}}
+\newcommand{\hexhead}{{{\color{hex}HEX HEAD}}}
+
+\definecolor{allen}{HTML}{E3A01C}
+\definecolor{slotted}{HTML}{1C5FE3}
+\definecolor{phillips}{HTML}{E31CC3}
+\definecolor{pozidrive}{HTML}{6B0CF3}
+
+\newcommand{\allen}{{{\color{allen}ALLEN\newline}}}
+\newcommand{\slotted}{{{\color{slotted}SLOT\newline}}}
+\newcommand{\phillips}{{{\color{phillips}PHILLIPS\newline}}}
+\newcommand{\pozidrive}{{{\color{pozidrive}POZIDRIVE\newline}}}
+
+% Define lookup table for head shapes
+\ExplSyntaxOn
+\NewDocumentCommand{\slotmap}{m}
+ {
+  \str_case:nn {#1}
+  {
+    { \slotted\panhead } { \includegraphics[width=13pt]{SLOTTED.png} }
+    { \phillips\panhead } { \includegraphics[width=13pt]{PHILLIPS.png} }
+    { \pozidrive\panhead } { \includegraphics[width=13pt]{POZIDRIVE.png} }
+    { \slotted\countersunk } { \includegraphics[width=13pt]{SLOTTED.png} }
+    { \phillips\countersunk } { \includegraphics[width=13pt]{PHILLIPS.png} }
+    { \pozidrive\countersunk } { \includegraphics[width=13pt]{POZIDRIVE.png} }
+    { \allen\countersunk } { \includegraphics[width=13pt]{ALLEN.png} }
+    { \phillips\socket } { \includegraphics[width=13pt]{PHILLIPS.png} }
+    { \pozidrive\socket } { \includegraphics[width=13pt]{POZIDRIVE.png} }
+    { \allen\socket } { \includegraphics[width=13pt]{ALLEN.png} }
+    { \hexhead } { \includegraphics[width=13pt]{HEX.png}}
+  }
+ }
+\ExplSyntaxOff
+
+% Define lookup table for screw shapes
+\ExplSyntaxOn
+\NewDocumentCommand{\headmap}{m}
+ {
+  \str_case:nn {#1}
+  {
+    { \slotted\panhead } { \includegraphics[width=15pt]{PANHEAD.png} }
+    { \phillips\panhead } { \includegraphics[width=15pt]{PANHEAD.png} }
+    { \pozidrive\panhead } { \includegraphics[width=15pt]{PANHEAD.png} }
+    { \slotted\countersunk } { \includegraphics[width=15pt]{CSKHEAD.png} }
+    { \phillips\countersunk } { \includegraphics[width=15pt]{CSKHEAD.png} }
+    { \pozidrive\countersunk } { \includegraphics[width=15pt]{CSKHEAD.png} }
+    { \allen\countersunk } { \includegraphics[width=15pt]{CSKHEAD.png} }
+    { \phillips\socket } { \includegraphics[width=15pt]{SOCKETHEAD.png} }
+    { \pozidrive\socket } { \includegraphics[width=15pt]{SOCKETHEAD.png} }
+    { \allen\socket } { \includegraphics[width=15pt]{SOCKETHEAD.png} }
+    { \hexhead } { \includegraphics[width=15pt]{HEXHEAD.png}}
+  }
+ }
+\ExplSyntaxOff
+
+\newcommand{\headanddesc}[1]{%
+    \begin{tabular}{ x{25pt} x{65pt} }%
+        \slotmap{#1} & {\bf #1} %
+    \end{tabular}%
+}
+
+\newcommand{\screw}[3]{%
+    \begin{center}%
+    \begin{tabular}{ c x{20pt} x{70pt} x{20pt} }%
+        \rotatebox[origin=cB]{90}{\makebox[25pt]{\bf #1}} & \slotmap{#2} & {\bf #2} \newline {\bf #3} & \rotatebox[origin=rB]{-90}{\makebox[20pt]{\headmap{#2}}} \\%
+    \end{tabular}%
+    \end{center}%
+}
+
+\begin{document}
+\labelfile{screws.dat}
+\end{document}
